@@ -1,7 +1,11 @@
-import os, time 
+import os, time,shutil,colorama
+from colorama import Fore,Back,Style
+colorama.init(autoreset=True)
 def reset():
+    
     os.system('cls' if os.name == 'nt' else 'clear')
 nums = [4,8,16,32,64,128]
+
 def get_info():
     qstn = input("Add meg az IP-t: ")
     network_count = int(input("Add meg hány hálozatnak kell beleférnie: "))
@@ -10,6 +14,10 @@ def get_info():
 
 ip,network_count,def_mask = get_info()
 
+def center_text(text):
+    columns = shutil.get_terminal_size().columns
+    lines = text.splitlines()
+    return "\n".join(line.center(columns) for line in lines)
     
 def find_num(hosts=network_count):
     for i, n in enumerate(nums):
@@ -91,13 +99,29 @@ def f_gw_br(ip=ip,selected_hosts=closest):
 first_usable,broadcast_ip,gateway_ip = f_gw_br()
 
 def kiiras():
+    
     reset()
-    print(f"Closest Number to hosts: {closest}  ")         
-    print(f"IP Address: {ip}")
-    print("")
-    print(f"Subnet Mask: {eredmeny} ")
-    print(f"First usable IP: {first_usable} ")
-    print(f"Default Gateway: {gateway_ip} ")
-    print(f"Broadcast IP: {broadcast_ip} ")
+    i = 0
+    direction = 1
+    max_nigg = 3
+    while True:
+        print(Fore.CYAN + center_text(f'{"-"*i}Made by Pataky{"-"*i}'))
+        print()
+        print(center_text(f"Closest Number to hosts: {closest}  "))        
+        print(center_text(f"IP Address: {ip}"))
+        print("")
+        print(center_text(f"Subnet Mask: {eredmeny} "))
+        print(center_text(f"First usable IP: {first_usable} "))
+        print(center_text(f"Default Gateway: {gateway_ip} "))
+        print(center_text(f"Broadcast IP: {broadcast_ip} "))
+        time.sleep(1)
+        reset()
+        i += direction
+        if i >= max_nigg:
+            direction = -1
+        elif i <= 0:
+            direction = 1
+    
+    
     
 kiiras()

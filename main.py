@@ -4,11 +4,15 @@ colorama.init(autoreset=True)
 def reset():
     
     os.system('cls' if os.name == 'nt' else 'clear')
-nums = [4,8,16,32,64,128]
+nums = [4,8,16,32,64,128,256,512]
 
 def get_info():
     qstn = input("Add meg az IP-t: ")
-    network_count = int(input("Add meg hány hálozatnak kell beleférnie: "))
+    network_count = 0
+    while network_count < 2 or network_count > 254:
+        reset() 
+        network_count = int(input("Add meg hány hálozatnak kell beleférnie: "))
+    
     def_mask = "255.255.255.0"
     return qstn,network_count,def_mask
 
@@ -98,7 +102,7 @@ def f_gw_br(ip=ip,selected_hosts=closest):
 
 first_usable,broadcast_ip,gateway_ip = f_gw_br()
 
-def kiiras():
+def kiiras_v1():
     
     reset()
     i = 0
@@ -121,7 +125,23 @@ def kiiras():
             direction = -1
         elif i <= 0:
             direction = 1
+
+def kiiras_v2():
+    
+    reset()
+    print(Fore.CYAN + center_text("Made by Pataky"))
+    print()
+    print(center_text(f"Closest Number to hosts: {closest}  "))        
+    print(center_text(f"IP Address: {ip}"))
+    print("")
+    print(center_text(f"Subnet Mask: {eredmeny} "))
+    print(center_text(f"First usable IP: {first_usable} "))
+    print(center_text(f"Default Gateway: {gateway_ip} "))
+    print(center_text(f"Broadcast IP: {broadcast_ip} "))
+    time.sleep(600)
+    
+        
     
     
     
-kiiras()
+kiiras_v2()

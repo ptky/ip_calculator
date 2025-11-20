@@ -1,24 +1,32 @@
 import os, time 
 def reset():
     os.system('cls' if os.name == 'nt' else 'clear')
-    
+nums = [4,8,16,32,64,128]
 def get_info():
     qstn = input("Add meg az IP-t: ")
-    prefix_lenght = input("Add meg a prefix lenght-et [nem kell /]: ")
-    network_count = input("Add meg hány hálozatnak kell beleférnie: ")    
-    return qstn,prefix_lenght,network_count
+    network_count = int(input("Add meg hány hálozatnak kell beleférnie: "))
+    def_mask = "255.255.255.0"
+    return qstn,network_count,def_mask
 
+ip,network_count,def_mask = get_info()
 
-nums_in_binary = []
-
-ip,prefix_l,network_count = get_info()
-
-
-def calc(ip=ip,prefix=prefix_l,netw=network_count):
     
-    parts = ip.split(".")
+def find_num(hosts=network_count):
+    for i, n in enumerate(nums):
+        if n >= hosts + 2:
+            selected_block = n
+            prefix_index = i
+            return selected_block, prefix_index
+
+
+closest, prefix_index = find_num()
+prefix_l = 32 - (prefix_index + 2)
+
+
+def calc(addr:str):
+    inside = []
+    parts = addr.split(".")
     
-    print(parts)
     for i in parts:
         szam = int(i)
         binary_nums = []
@@ -28,17 +36,68 @@ def calc(ip=ip,prefix=prefix_l,netw=network_count):
             szam = szam//2
         if binary_nums:
             binary_nums.reverse()
-            nums_in_binary.append("".join(binary_nums))
+            inside.append("".join(binary_nums))
         else:
-            nums_in_binary.append("0")
+            inside.append("0")
+    return inside
+
+
+def mask(pfx=prefix_l):
+    nums_in_binary = calc("255.255.255.0")
+    needed = pfx-24
+    insert = "1" * needed + "0" * (8 - needed)
+    nums_in_binary[3] = insert
+    print(nums_in_binary)
+    ones = 0
+    help = 0
+    for i in nums_in_binary[3]:
+        if i == "1":
+            ones+=1
+        else:
+            continue
+    rev = nums[::-1]
+    for i in range(0,ones):
+        help+=rev[i]
+    eredmeny = f"255.255.255.{help}"
+    return eredmeny
         
-        
-            
+    
+eredmeny = mask(pfx=prefix_l)
+
+def f_gw_br(ip=ip,selected_hosts=closest):
+    # first usable ip
+    first_usable = ip.split(".")
+    fu = int(first_usable[3]) + 1
+    first_usable[3] = str(fu)
+
+    
+    # broadcast ip
+    broadcast_ip = ip.split(".")
+    br_ip = int(broadcast_ip[3])
+    broadcast_ip[3] = str(br_ip + selected_hosts - 1)
+    print(broadcast_ip)
+    
+    # gateway
+    gateway_ip = ip.split(".")
+    gw_ip = int(gateway_ip[3])
+    gw_ip = gw_ip+(closest-2)
+    gateway_ip[3] = str(gw_ip)
+    
+    fu_str = ".".join(first_usable)
+    br_str = ".".join(broadcast_ip)
+    gw_str = ".".join(gateway_ip)
+    return fu_str, br_str, gw_str
+
+first_usable,broadcast_ip,gateway_ip = f_gw_br()
+
+def kiiras():
+    reset()
+    print(f"Closest Number to hosts: {closest}  ")         
     print(f"IP Address: {ip}")
-    print(f"Subnet Mask: ")
     print("")
-    print(f"First usable IP: ")
-    print(f"Default Gateway: ")
-    print(f"Broadcast IP: ")
+    print(f"Subnet Mask: {eredmeny} ")
+    print(f"First usable IP: {first_usable} ")
+    print(f"Default Gateway: {gateway_ip} ")
+    print(f"Broadcast IP: {broadcast_ip} ")
     
-    
+kiiras()

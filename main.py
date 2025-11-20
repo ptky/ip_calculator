@@ -55,24 +55,10 @@ def calc(addr:str):
 
 
 def mask(pfx=prefix_l):
-    nums_in_binary = calc("255.255.255.0")
-    needed = pfx-24
-    insert = "1" * needed + "0" * (8 - needed)
-    nums_in_binary[3] = insert
-    print(nums_in_binary)
-    ones = 0
-    help = 0
-    for i in nums_in_binary[3]:
-        if i == "1":
-            ones+=1
-        else:
-            continue
-    rev = nums[::-1]
-    for i in range(0,ones):
-        help+=rev[i]
-    eredmeny = f"255.255.255.{help}"
+    needed = pfx - 24
+    fourth = int("1"*needed + "0"*(8-needed), 2)
+    eredmeny = f"255.255.255.{fourth}"
     return eredmeny
-        
     
 eredmeny = mask(pfx=prefix_l)
 

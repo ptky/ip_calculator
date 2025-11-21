@@ -54,12 +54,12 @@ def calc(addr:str):
     return inside
 
 
-def mask(pfx=int):
-    needed = pfx - 24
-    fourth = int("1"*needed + "0"*(8-needed), 2)
-    eredmeny = f"255.255.255.{fourth}"
-    return eredmeny
-    
+def mask(prefix_index):
+    cidr = 32 - (prefix_index + 2)
+    bin_mask = ("1" * cidr).ljust(32, "0")
+    octets = [str(int(bin_mask[i:i+8], 2)) for i in range(0, 32, 8)]
+    return ".".join(octets)
+
 
 
 def f_gw_br(ip,selected_hosts=int,closest=int):
@@ -114,7 +114,7 @@ def run():
     print(Fore.CYAN + center_text("Made by Pataky"))
     for hosts,index in netw:
         szam, prefix_l = find_num(hosts)
-        eredmeny = mask(pfx=prefix_l)
+        eredmeny = mask(prefix_index=prefix_l)
         fr_u, gw_ip, br_ip = f_gw_br(ip=current_ip, selected_hosts=szam, closest=szam)
         kiiras_v2(closest=szam,ip=current_ip,eredmeny=eredmeny,first_usable=fr_u,gateway_ip=gw_ip,broadcast_ip=br_ip,n=index+1)
 
